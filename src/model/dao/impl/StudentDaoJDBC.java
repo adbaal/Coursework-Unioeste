@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import db.DB;
+import db.DbRegistration;
 import db.DbException;
 import db.DbIntegrityException;
 import model.dao.StudentDao;
@@ -36,7 +36,7 @@ public class StudentDaoJDBC implements StudentDao {
 
 			st.setString(1, obj.getName());
 			st.setString(2, obj.getEmail());
-			st.setString(3, obj.getMobileNamber());
+			st.setString(3, obj.getMobileNumber());
 			st.setString(4, obj.getGender().toString());
 
 			int rowsAffected = st.executeUpdate();
@@ -56,7 +56,7 @@ public class StudentDaoJDBC implements StudentDao {
 			throw new DbException(e.getMessage());
 		} 
 		finally {
-			DB.closeStatement(st);
+			DbRegistration.closeStatement(st);
 		}
 	}
 
@@ -71,7 +71,7 @@ public class StudentDaoJDBC implements StudentDao {
 
 			st.setString(1, obj.getName());
 			st.setString(2, obj.getEmail());
-			st.setString(3, obj.getMobileNamber());
+			st.setString(3, obj.getMobileNumber());
 			st.setString(4, obj.getGender().toString());
 			st.setInt(5, obj.getId());
 
@@ -81,7 +81,7 @@ public class StudentDaoJDBC implements StudentDao {
 			throw new DbException(e.getMessage());
 		} 
 		finally {
-			DB.closeStatement(st);
+			DbRegistration.closeStatement(st);
 		}
 	}
 
@@ -100,7 +100,7 @@ public class StudentDaoJDBC implements StudentDao {
 			throw new DbIntegrityException(e.getMessage());
 		} 
 		finally {
-			DB.closeStatement(st);
+			DbRegistration.closeStatement(st);
 		}
 
 	}
@@ -119,7 +119,7 @@ public class StudentDaoJDBC implements StudentDao {
 				obj.setId(rs.getInt("Id"));
 				obj.setName(rs.getString("Name"));
 				obj.setEmail(rs.getString("Email"));
-				obj.setMobileNamber(rs.getString("MobileNumber"));
+				obj.setMobileNumber(rs.getString("MobileNumber"));
 				obj.setGender(Gender.valueOf(rs.getString("Gender")));
 				return obj;
 			}
@@ -129,8 +129,8 @@ public class StudentDaoJDBC implements StudentDao {
 			throw new DbException(e.getMessage());
 		}
 		finally {
-			DB.closeStatement(st);
-			DB.closeResultSet(rs);
+			DbRegistration.closeStatement(st);
+			DbRegistration.closeResultSet(rs);
 		}
 	}
 
@@ -150,7 +150,7 @@ public class StudentDaoJDBC implements StudentDao {
 				obj.setId(rs.getInt("Id"));
 				obj.setName(rs.getString("Name"));
 				obj.setEmail(rs.getString("Email"));
-				obj.setMobileNamber(rs.getString("MobileNumber"));
+				obj.setMobileNumber(rs.getString("MobileNumber"));
 				obj.setGender(Gender.valueOf(rs.getString("Gender")));
 				list.add(obj);
 			}
@@ -160,8 +160,8 @@ public class StudentDaoJDBC implements StudentDao {
 			throw new DbException(e.getMessage());
 		}
 		finally {
-			DB.closeStatement(st);
-			DB.closeResultSet(rs);
+			DbRegistration.closeStatement(st);
+			DbRegistration.closeResultSet(rs);
 		}
 	}
 

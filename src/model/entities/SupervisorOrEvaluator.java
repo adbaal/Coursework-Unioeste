@@ -19,6 +19,10 @@ public class SupervisorOrEvaluator extends Person{
 		return institution;
 	}
 
+	public String getInstitutionName() {
+		return institution.getAbbreviationOrAcronym();
+	}
+	
 	public void setInstitution(Institution institution) {
 		this.institution = institution;
 	}

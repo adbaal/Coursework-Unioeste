@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import db.DB;
+import db.DbRegistration;
 import db.DbException;
 import db.DbIntegrityException;
 import model.dao.InstitutionDao;
@@ -28,12 +28,12 @@ public class InstitutionDaoJDBC implements InstitutionDao{
 		try {
 			st = conn.prepareStatement(
 				"INSERT INTO tbInstitution " +
-				"(AbreviationOrAcronym, Name) " +
+				"(AbbreviationOrAcronym, Name) " +
 				"VALUES " +
 				"(?, ?)", 
 				Statement.RETURN_GENERATED_KEYS);
 
-			st.setString(1, obj.getAbreviationOrAcronym());
+			st.setString(1, obj.getAbbreviationOrAcronym());
 			st.setString(2, obj.getName());
 
 			int rowsAffected = st.executeUpdate();
@@ -53,7 +53,7 @@ public class InstitutionDaoJDBC implements InstitutionDao{
 			throw new DbException(e.getMessage());
 		} 
 		finally {
-			DB.closeStatement(st);
+			DbRegistration.closeStatement(st);
 		}
 	}
 
@@ -63,10 +63,10 @@ public class InstitutionDaoJDBC implements InstitutionDao{
 		try {
 			st = conn.prepareStatement(
 					"UPDATE tbInstitution "
-					+ "SET AbreviationOrAcronym = ?, Name = ?"
+					+ "SET AbbreviationOrAcronym = ?, Name = ?"
 					+ "WHERE Id = ?");
 
-			st.setString(1, obj.getAbreviationOrAcronym());
+			st.setString(1, obj.getAbbreviationOrAcronym());
 			st.setString(2, obj.getName());
 			st.setInt(3, obj.getId());
 
@@ -76,7 +76,7 @@ public class InstitutionDaoJDBC implements InstitutionDao{
 			throw new DbException(e.getMessage());
 		} 
 		finally {
-			DB.closeStatement(st);
+			DbRegistration.closeStatement(st);
 		}
 		
 	}
@@ -96,7 +96,7 @@ public class InstitutionDaoJDBC implements InstitutionDao{
 			throw new DbIntegrityException(e.getMessage());
 		} 
 		finally {
-			DB.closeStatement(st);
+			DbRegistration.closeStatement(st);
 		}
 		
 	}
@@ -113,7 +113,7 @@ public class InstitutionDaoJDBC implements InstitutionDao{
 			if (rs.next()) {
 				Institution obj = new Institution();
 				obj.setId(rs.getInt("Id"));
-				obj.setAbreviationOrAcronym(rs.getString("AbreviationOrAcronym"));
+				obj.setAbbreviationOrAcronym(rs.getString("AbbreviationOrAcronym"));
 				obj.setName(rs.getString("Name"));
 				return obj;
 			}
@@ -123,8 +123,8 @@ public class InstitutionDaoJDBC implements InstitutionDao{
 			throw new DbException(e.getMessage());
 		}
 		finally {
-			DB.closeStatement(st);
-			DB.closeResultSet(rs);
+			DbRegistration.closeStatement(st);
+			DbRegistration.closeResultSet(rs);
 		}
 	}
 
@@ -142,7 +142,7 @@ public class InstitutionDaoJDBC implements InstitutionDao{
 			while (rs.next()) {
 				Institution obj = new Institution();
 				obj.setId(rs.getInt("Id"));
-				obj.setAbreviationOrAcronym(rs.getString("AbreviationOrAcronym"));
+				obj.setAbbreviationOrAcronym(rs.getString("AbbreviationOrAcronym"));
 				obj.setName(rs.getString("Name"));
 				list.add(obj);
 			}
@@ -152,8 +152,8 @@ public class InstitutionDaoJDBC implements InstitutionDao{
 			throw new DbException(e.getMessage());
 		}
 		finally {
-			DB.closeStatement(st);
-			DB.closeResultSet(rs);
+			DbRegistration.closeStatement(st);
+			DbRegistration.closeResultSet(rs);
 		}
 	}
 

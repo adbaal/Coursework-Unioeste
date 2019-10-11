@@ -24,10 +24,10 @@ CREATE TABLE tbStudent (
 
 CREATE TABLE tbInstitution (
   Id int(11) NOT NULL AUTO_INCREMENT,
-  AbreviationOrAcronym varchar(30) NOT NULL,
+  AbbreviationOrAcronym varchar(30) NOT NULL,
   Name varchar(100) NOT NULL,
   PRIMARY KEY (Id),
-  UNIQUE KEY (AbreviationOrAcronym, Name)
+  UNIQUE KEY (AbbreviationOrAcronym, Name)
 );
 
 
@@ -80,10 +80,16 @@ CREATE TABLE tbFinalProjectDefense (
   UNIQUE KEY (FinalProjectId)
 );
 
+CREATE TABLE tbactualacademicyear (
+  id enum('only') not null unique default 'only',
+  year int(11),
+  primary key (id)
+);
+
 USE dbfinalproject;
 
 
-INSERT INTO tbInstitution (AbreviationOrAcronym, Name) VALUES 
+INSERT INTO tbInstitution (AbbreviationOrAcronym, Name) VALUES 
   ('Unioeste','Universidade Estadual do Oeste do Paraná'),
   ('UNILA','Universidade Federal da Integração Latino-Americana'),
   ('Itaipu','Usina Hidrelétrica Itaipu Binacional'),
@@ -126,4 +132,92 @@ ON tbInstSup.Id = tbSup.InstitutionId
 LEFT JOIN tbSupervisorOrEvaluator AS tbCoSup
 ON tbCoSup.Id = tbFP.CoSupervisorID
 LEFT JOIN tbinstitution AS tbInstCoSup
-ON tbCoSup.InstitutionId = tbInstCoSup.Id;
+ON tbCoSup.InstitutionId = tbInstCoSup.Id
+WHERE tbFP.SupervisorID = 1 or tbFP.CoSupervisorID = 1
+ORDER BY tbSt.Name;
+
+
+SELECT tbFPD.*, tbFP.*, tbSt.*, tbSup.*, tbInstSup.*, tbCoSup.*, tbInstCoSup.*, tbEv1.*, tbInstEv1.*, tbEv2.*, tbInstEv2.*, tbEv3.*, tbInstEv3.*, tbEv4.*, tbInstEv4.*, tbEv5.*, tbInstEv5.*, tbEv6.*, tbInstEv6.*
+FROM tbFinalProjectDefense AS tbFPD
+JOIN tbFinalProject AS tbFP
+ON tbFPD.FinalProjectId = tbFP.Id
+JOIN tbStudent AS tbSt
+ON tbFP.StudentId = tbSt.Id
+LEFT JOIN tbSupervisorOrEvaluator AS tbSup
+ON tbSup.Id = tbFP.SupervisorID
+LEFT JOIN tbinstitution AS tbInstSup
+ON tbInstSup.Id = tbSup.InstitutionId
+LEFT JOIN tbSupervisorOrEvaluator AS tbCoSup
+ON tbCoSup.Id = tbFP.CoSupervisorID
+LEFT JOIN tbinstitution AS tbInstCoSup
+ON tbCoSup.InstitutionId = tbInstCoSup.Id
+LEFT JOIN tbSupervisorOrEvaluator AS tbEv1
+ON tbFPD.Evaluator1Id = tbEv1.Id
+LEFT JOIN tbinstitution AS tbInstEv1
+ON tbEv1.InstitutionId = tbInstEv1.Id
+LEFT JOIN tbSupervisorOrEvaluator AS tbEv2
+ON tbFPD.Evaluator2Id = tbEv2.Id
+LEFT JOIN tbinstitution AS tbInstEv2
+ON tbEv2.InstitutionId = tbInstEv2.Id
+LEFT JOIN tbSupervisorOrEvaluator AS tbEv3
+ON tbFPD.Evaluator3Id = tbEv3.Id
+LEFT JOIN tbinstitution AS tbInstEv3
+ON tbEv3.InstitutionId = tbInstEv3.Id
+LEFT JOIN tbSupervisorOrEvaluator AS tbEv4
+ON tbFPD.Evaluator4Id = tbEv4.Id
+LEFT JOIN tbinstitution AS tbInstEv4
+ON tbEv4.InstitutionId = tbInstEv4.Id
+LEFT JOIN tbSupervisorOrEvaluator AS tbEv5
+ON tbFPD.Evaluator5Id = tbEv5.Id
+LEFT JOIN tbinstitution AS tbInstEv5
+ON tbEv5.InstitutionId = tbInstEv5.Id
+LEFT JOIN tbSupervisorOrEvaluator AS tbEv6
+ON tbFPD.Evaluator6Id = tbEv6.Id
+LEFT JOIN tbinstitution AS tbInstEv6
+ON tbEv6.InstitutionId = tbInstEv6.Id
+ORDER BY tbSt.Name;
+  
+
+
+SELECT tbFPD.*, tbFP.*, tbSt.*, tbSup.*, tbInstSup.*, tbCoSup.*, tbInstCoSup.*, tbEv1.*, tbInstEv1.*, tbEv2.*, tbInstEv2.*, tbEv3.*, tbInstEv3.*, tbEv4.*, tbInstEv4.*, tbEv5.*, tbInstEv5.*, tbEv6.*, tbInstEv6.*
+FROM tbFinalProjectDefense AS tbFPD
+JOIN tbFinalProject AS tbFP
+ON tbFPD.FinalProjectId = tbFP.Id
+JOIN tbStudent AS tbSt
+ON tbFP.StudentId = tbSt.Id
+LEFT JOIN tbSupervisorOrEvaluator AS tbSup
+ON tbSup.Id = tbFP.SupervisorID
+LEFT JOIN tbinstitution AS tbInstSup
+ON tbInstSup.Id = tbSup.InstitutionId
+LEFT JOIN tbSupervisorOrEvaluator AS tbCoSup
+ON tbCoSup.Id = tbFP.CoSupervisorID
+LEFT JOIN tbinstitution AS tbInstCoSup
+ON tbCoSup.InstitutionId = tbInstCoSup.Id
+LEFT JOIN tbSupervisorOrEvaluator AS tbEv1
+ON tbFPD.Evaluator1Id = tbEv1.Id
+LEFT JOIN tbinstitution AS tbInstEv1
+ON tbEv1.InstitutionId = tbInstEv1.Id
+LEFT JOIN tbSupervisorOrEvaluator AS tbEv2
+ON tbFPD.Evaluator2Id = tbEv2.Id
+LEFT JOIN tbinstitution AS tbInstEv2
+ON tbEv2.InstitutionId = tbInstEv2.Id
+LEFT JOIN tbSupervisorOrEvaluator AS tbEv3
+ON tbFPD.Evaluator3Id = tbEv3.Id
+LEFT JOIN tbinstitution AS tbInstEv3
+ON tbEv3.InstitutionId = tbInstEv3.Id
+LEFT JOIN tbSupervisorOrEvaluator AS tbEv4
+ON tbFPD.Evaluator4Id = tbEv4.Id
+LEFT JOIN tbinstitution AS tbInstEv4
+ON tbEv4.InstitutionId = tbInstEv4.Id
+LEFT JOIN tbSupervisorOrEvaluator AS tbEv5
+ON tbFPD.Evaluator5Id = tbEv5.Id
+LEFT JOIN tbinstitution AS tbInstEv5
+ON tbEv5.InstitutionId = tbInstEv5.Id
+LEFT JOIN tbSupervisorOrEvaluator AS tbEv6
+ON tbFPD.Evaluator6Id = tbEv6.Id
+LEFT JOIN tbinstitution AS tbInstEv6
+ON tbEv6.InstitutionId = tbInstEv6.Id
+WHERE tbFP.SupervisorID = 1 or tbFP.CoSupervisorID = 1
+ORDER BY tbSt.Name;  
+  
+  

@@ -6,18 +6,18 @@ public class Person {
 	private Integer id;
 	private String name;
 	private String email;
-	private String mobileNamber;
+	private String mobileNumber;
 	private Gender gender;
 	
 	public Person() {
 		
 	}
 	
-	public Person(Integer id, String name, String email, String mobileNamber, Gender gender) {
+	public Person(Integer id, String name, String email, String mobileNumber, Gender gender) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
-		this.mobileNamber = mobileNamber;
+		this.mobileNumber = mobileNumber;
 		this.gender = gender;
 	}
 
@@ -45,12 +45,12 @@ public class Person {
 		this.email = email;
 	}
 
-	public String getMobileNamber() {
-		return mobileNamber;
+	public String getMobileNumber() {
+		return mobileNumber;
 	}
 
-	public void setMobileNamber(String mobileNamber) {
-		this.mobileNamber = mobileNamber;
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
 	}
 
 	public Gender getGender() {
@@ -89,7 +89,7 @@ public class Person {
 
 	@Override
 	public String toString() {
-		return "Person [id=" + id + ", name=" + name + ", email=" + email + ", mobileNamber=" + mobileNamber
+		return "Person [id=" + id + ", name=" + name + ", email=" + email + ", mobileNamber=" + mobileNumber
 				+ ", gender=" + gender + "]";
 	}
 	

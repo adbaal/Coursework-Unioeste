@@ -11,7 +11,7 @@ import java.util.Map;
 
 import com.mysql.jdbc.Statement;
 
-import db.DB;
+import db.DbRegistration;
 import db.DbException;
 import db.DbIntegrityException;
 import model.dao.FinalProjectDao;
@@ -42,7 +42,11 @@ public class FinalProjectDaoJDBC implements FinalProjectDao{
 			
 			st.setInt(1, obj.getStudent().getId());
 			st.setInt(2, obj.getSupervisor().getId());
-			st.setInt(3, obj.getCoSupervisor().getId());
+			if(obj.getCoSupervisor()==null) {
+				st.setNull(3, java.sql.Types.INTEGER);
+			}else {
+				st.setInt(3, obj.getCoSupervisor().getId());
+			}
 			st.setString(4, obj.getTitle());
 			
 			int rowsAffected = st.executeUpdate();
@@ -53,7 +57,7 @@ public class FinalProjectDaoJDBC implements FinalProjectDao{
 					int id = rs.getInt(1);
 					obj.setId(id);
 				}
-				DB.closeResultSet(rs);
+				DbRegistration.closeResultSet(rs);
 			}
 			else {
 				throw new DbException("Unexpected error! No rows affected!");
@@ -63,7 +67,7 @@ public class FinalProjectDaoJDBC implements FinalProjectDao{
 			throw new DbIntegrityException(e.getMessage());
 		}
 		finally {
-			DB.closeStatement(st);
+			DbRegistration.closeStatement(st);
 		}
 	}
 
@@ -78,7 +82,11 @@ public class FinalProjectDaoJDBC implements FinalProjectDao{
 			
 			st.setInt(1, obj.getStudent().getId());
 			st.setInt(2, obj.getSupervisor().getId());
-			st.setInt(3, obj.getCoSupervisor().getId());
+			if(obj.getCoSupervisor()==null) {
+				st.setNull(3, java.sql.Types.INTEGER);
+			}else {
+				st.setInt(3, obj.getCoSupervisor().getId());
+			}
 			st.setString(4, obj.getTitle());
 			st.setInt(5, obj.getId());
 
@@ -88,7 +96,7 @@ public class FinalProjectDaoJDBC implements FinalProjectDao{
 			throw new DbIntegrityException(e.getMessage());
 		}
 		finally {
-			DB.closeStatement(st);
+			DbRegistration.closeStatement(st);
 		}
 		
 	}
@@ -108,7 +116,7 @@ public class FinalProjectDaoJDBC implements FinalProjectDao{
 			throw new DbIntegrityException(e.getMessage());
 		} 
 		finally {
-			DB.closeStatement(st);
+			DbRegistration.closeStatement(st);
 		}
 		
 	}
@@ -135,20 +143,32 @@ public class FinalProjectDaoJDBC implements FinalProjectDao{
 
 			st.setInt(1, id);
 			rs = st.executeQuery();
+			
+			Map<Integer, Institution> mapInst = new HashMap<>();
+			
 			if (rs.next()) {
 				Student student = instantiateStudent(rs);
 
 				SupervisorOrEvaluator sup = null;
 				Integer isNull = rs.getInt("tbFP.SupervisorId");
 				if(isNull>0) {
-					Institution instSup = instantiateInstitution(rs, "tbInstSup");
+					
+					Institution instSup = mapInst.get(rs.getInt("tbSup.InstitutionId"));
+					if (instSup == null) {
+						instSup = instantiateInstitution(rs, "tbInstSup");
+						mapInst.put(rs.getInt("tbSup.InstitutionId"), instSup);
+					}
 					sup = instantiateSupervisorOrEvaluator(rs, instSup, "tbSup");
 				}
 
 				SupervisorOrEvaluator coSup = null;
 				isNull = rs.getInt("tbFP.CoSupervisorId");
 				if(isNull>0) {
-					Institution	instCoSup = instantiateInstitution(rs, "tbInstCoSup");
+					Institution instCoSup = mapInst.get(rs.getInt("tbCoSup.InstitutionId"));
+					if (instCoSup == null) {
+						instCoSup = instantiateInstitution(rs, "tbInstCoSup");
+						mapInst.put(rs.getInt("tbCoSup.InstitutionId"), instCoSup);
+					}
 					coSup = instantiateSupervisorOrEvaluator(rs, instCoSup, "tbCoSup");
 				}
 
@@ -161,8 +181,8 @@ public class FinalProjectDaoJDBC implements FinalProjectDao{
 			throw new DbException(e.getMessage());
 		}
 		finally {
-			DB.closeStatement(st);
-			DB.closeResultSet(rs);
+			DbRegistration.closeStatement(st);
+			DbRegistration.closeResultSet(rs);
 		}
 	}
 	
@@ -181,7 +201,7 @@ public class FinalProjectDaoJDBC implements FinalProjectDao{
 		obj.setId(rs.getInt(table + ".Id"));
 		obj.setName(rs.getString(table + ".Name"));
 		obj.setEmail(rs.getString(table + ".Email"));
-		obj.setMobileNamber(rs.getString(table + ".MobileNumber"));
+		obj.setMobileNumber(rs.getString(table + ".MobileNumber"));
 		obj.setGender(Gender.valueOf(rs.getString(table + ".Gender")));
 		obj.setInstitution(inst);
 		return obj;
@@ -190,7 +210,7 @@ public class FinalProjectDaoJDBC implements FinalProjectDao{
 	private Institution instantiateInstitution(ResultSet rs, String table) throws SQLException {
 		Institution inst = new Institution();
 		inst.setId(rs.getInt(table+".Id"));
-		inst.setAbreviationOrAcronym(rs.getString(table+".AbreviationOrAcronym"));
+		inst.setAbbreviationOrAcronym(rs.getString(table+".AbbreviationOrAcronym"));
 		inst.setName(rs.getString(table+".Name"));
 		return inst;
 	}
@@ -199,7 +219,7 @@ public class FinalProjectDaoJDBC implements FinalProjectDao{
 		Student student = new Student();
 		student.setId(rs.getInt("tbSt.Id"));
 		student.setName(rs.getString("tbSt.Name"));
-		student.setMobileNamber(rs.getString("tbSt.MobileNumber"));
+		student.setMobileNumber(rs.getString("tbSt.MobileNumber"));
 		student.setGender(Gender.valueOf(rs.getString("tbSt.Gender")));
 		return student;
 	}
@@ -215,11 +235,11 @@ public class FinalProjectDaoJDBC implements FinalProjectDao{
 					+"JOIN tbStudent AS tbSt "
 					+"ON tbFP.StudentId = tbSt.Id "
 					+"LEFT JOIN tbSupervisorOrEvaluator AS tbSup "
-					+"ON tbSup.Id = tbFP.SupervisorID "
+					+"ON tbSup.Id = tbFP.SupervisorId "
 					+"LEFT JOIN tbinstitution AS tbInstSup "
 					+"ON tbInstSup.Id = tbSup.InstitutionId "
 					+"LEFT JOIN tbSupervisorOrEvaluator AS tbCoSup "
-					+"ON tbCoSup.Id = tbFP.CoSupervisorID "
+					+"ON tbCoSup.Id = tbFP.CoSupervisorId "
 					+"LEFT JOIN tbinstitution AS tbInstCoSup "
 					+"ON tbCoSup.InstitutionId = tbInstCoSup.Id "
 					+"ORDER BY tbSt.Name");
@@ -268,7 +288,7 @@ public class FinalProjectDaoJDBC implements FinalProjectDao{
 
 					if (coSup == null) {
 						coSup = instantiateSupervisorOrEvaluator(rs, instCoSup, "tbCoSup");
-						mapSup.put(rs.getInt("tbFP.SupervisorId"), coSup);
+						mapSup.put(rs.getInt("tbFP.CoSupervisorId"), coSup);
 					}
 				}
 				
@@ -279,13 +299,13 @@ public class FinalProjectDaoJDBC implements FinalProjectDao{
 		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeStatement(st);
-			DB.closeResultSet(rs);
+			DbRegistration.closeStatement(st);
+			DbRegistration.closeResultSet(rs);
 		}
 	}
 
 	@Override
-	public List<FinalProject> findBySupervisorOrEvaluator(SupervisorOrEvaluator supervisor) {
+	public List<FinalProject> findBySupervisor(SupervisorOrEvaluator supervisor) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
@@ -302,11 +322,10 @@ public class FinalProjectDaoJDBC implements FinalProjectDao{
 					+"ON tbCoSup.Id = tbFP.CoSupervisorID "
 					+"LEFT JOIN tbinstitution AS tbInstCoSup "
 					+"ON tbCoSup.InstitutionId = tbInstCoSup.Id "
-					+"WHERE tbFP.SupervisorID = ? or tbFP.CoSupervisorID = ? "
+					+"WHERE tbFP.SupervisorID = ? "
 					+"ORDER BY tbSt.Name");
 			
 			st.setInt(1, supervisor.getId());
-			st.setInt(2, supervisor.getId());
 			
 			rs = st.executeQuery();
 
@@ -364,8 +383,157 @@ public class FinalProjectDaoJDBC implements FinalProjectDao{
 		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeStatement(st);
-			DB.closeResultSet(rs);
+			DbRegistration.closeStatement(st);
+			DbRegistration.closeResultSet(rs);
+		}
+	}
+
+	@Override
+	public FinalProject findByStudent(Student student) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement(
+					"SELECT tbFP.*, tbSt.*, tbSup.*,  tbCoSup.*, tbInstSup.*, tbInstCoSup.* "
+							+"FROM tbFinalProject AS tbFP "
+							+"JOIN tbStudent AS tbSt "
+							+"ON tbFP.StudentId = tbSt.Id "
+							+"LEFT JOIN tbSupervisorOrEvaluator AS tbSup "
+							+"ON tbSup.Id = tbFP.SupervisorID "
+							+"LEFT JOIN tbinstitution AS tbInstSup "
+							+"ON tbInstSup.Id = tbSup.InstitutionId "
+							+"LEFT JOIN tbSupervisorOrEvaluator AS tbCoSup "
+							+"ON tbCoSup.Id = tbFP.CoSupervisorID "
+							+"LEFT JOIN tbinstitution AS tbInstCoSup "
+							+"ON tbCoSup.InstitutionId = tbInstCoSup.Id "
+							+ "WHERE tbSt.Id = ?");
+
+			st.setInt(1, student.getId());
+			rs = st.executeQuery();
+			
+			Map<Integer, Institution> mapInst = new HashMap<>();
+			
+			if (rs.next()) {
+				Student student2 = instantiateStudent(rs);
+
+				SupervisorOrEvaluator sup = null;
+				Integer isNull = rs.getInt("tbFP.SupervisorId");
+				if(isNull>0) {
+					
+					Institution instSup = mapInst.get(rs.getInt("tbSup.InstitutionId"));
+					if (instSup == null) {
+						instSup = instantiateInstitution(rs, "tbInstSup");
+						mapInst.put(rs.getInt("tbSup.InstitutionId"), instSup);
+					}
+					sup = instantiateSupervisorOrEvaluator(rs, instSup, "tbSup");
+				}
+
+				SupervisorOrEvaluator coSup = null;
+				isNull = rs.getInt("tbFP.CoSupervisorId");
+				if(isNull>0) {
+					Institution instCoSup = mapInst.get(rs.getInt("tbCoSup.InstitutionId"));
+					if (instCoSup == null) {
+						instCoSup = instantiateInstitution(rs, "tbInstCoSup");
+						mapInst.put(rs.getInt("tbCoSup.InstitutionId"), instCoSup);
+					}
+					coSup = instantiateSupervisorOrEvaluator(rs, instCoSup, "tbCoSup");
+				}
+
+				FinalProject obj = instantiateFinalProject(rs, student2, sup, coSup);
+				return obj;
+			}
+			return null;
+		}
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DbRegistration.closeStatement(st);
+			DbRegistration.closeResultSet(rs);
+		}
+	}
+
+	@Override
+	public List<FinalProject> findByCoSupervisor(SupervisorOrEvaluator coSupervisor) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement(
+					"SELECT tbFP.*, tbSt.*, tbSup.*,  tbCoSup.*, tbInstSup.*, tbInstCoSup.* "
+					+"FROM tbFinalProject AS tbFP "
+					+"JOIN tbStudent AS tbSt "
+					+"ON tbFP.StudentId = tbSt.Id "
+					+"LEFT JOIN tbSupervisorOrEvaluator AS tbSup "
+					+"ON tbSup.Id = tbFP.SupervisorID "
+					+"LEFT JOIN tbinstitution AS tbInstSup "
+					+"ON tbInstSup.Id = tbSup.InstitutionId "
+					+"LEFT JOIN tbSupervisorOrEvaluator AS tbCoSup "
+					+"ON tbCoSup.Id = tbFP.CoSupervisorID "
+					+"LEFT JOIN tbinstitution AS tbInstCoSup "
+					+"ON tbCoSup.InstitutionId = tbInstCoSup.Id "
+					+"WHERE tbFP.CoSupervisorID = ?"
+					+"ORDER BY tbSt.Name");
+			
+			st.setInt(1, coSupervisor.getId());
+			
+			rs = st.executeQuery();
+
+
+			List<FinalProject> list = new ArrayList<>();
+			Map<Integer, Institution> mapInst = new HashMap<>();
+			Map<Integer, SupervisorOrEvaluator> mapSup = new HashMap<>();
+
+			while (rs.next()) {
+				
+				Student student = instantiateStudent(rs);
+				
+				SupervisorOrEvaluator sup = null;
+				Integer isNull = rs.getInt("tbFP.SupervisorId");
+				if(isNull>0) {
+					
+					Institution instSup = mapInst.get(rs.getInt("tbSup.InstitutionId"));
+					
+					if (instSup == null) {
+						instSup = instantiateInstitution(rs, "tbInstSup");
+						mapInst.put(rs.getInt("tbSup.InstitutionId"), instSup);
+					}
+					
+					sup = mapSup.get(rs.getInt("tbFP.SupervisorId"));
+
+					if (sup == null) {
+						sup = instantiateSupervisorOrEvaluator(rs, instSup, "tbSup");
+						mapSup.put(rs.getInt("tbFP.SupervisorId"), sup);
+					}
+				}
+				
+				SupervisorOrEvaluator coSup = null;
+				isNull = rs.getInt("tbFP.CoSupervisorId");
+				if(isNull>0) {
+					
+					Institution instCoSup = mapInst.get(rs.getInt("tbCoSup.InstitutionId"));
+					
+					if (instCoSup == null) {
+						instCoSup = instantiateInstitution(rs, "tbInstCoSup");
+						mapInst.put(rs.getInt("tbCoSup.InstitutionId"), instCoSup);
+					}
+					
+					coSup = mapSup.get(rs.getInt("tbFP.CoSupervisorId"));
+
+					if (coSup == null) {
+						coSup = instantiateSupervisorOrEvaluator(rs, instCoSup, "tbCoSup");
+						mapSup.put(rs.getInt("tbFP.SupervisorId"), coSup);
+					}
+				}
+				
+				FinalProject obj = instantiateFinalProject(rs, student, sup, coSup);
+				list.add(obj);
+			}
+			return list;
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DbRegistration.closeStatement(st);
+			DbRegistration.closeResultSet(rs);
 		}
 	}
 

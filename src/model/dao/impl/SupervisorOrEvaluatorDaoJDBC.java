@@ -11,7 +11,7 @@ import java.util.Map;
 
 import com.mysql.jdbc.Statement;
 
-import db.DB;
+import db.DbRegistration;
 import db.DbException;
 import db.DbIntegrityException;
 import model.dao.SupervisorOrEvaluatorDao;
@@ -40,7 +40,7 @@ public class SupervisorOrEvaluatorDaoJDBC implements SupervisorOrEvaluatorDao {
 			
 			st.setString(1, obj.getName());
 			st.setString(2, obj.getEmail());
-			st.setString(3, obj.getMobileNamber());
+			st.setString(3, obj.getMobileNumber());
 			st.setString(4, obj.getGender().toString());
 			st.setInt(5, obj.getInstitution().getId());
 			
@@ -52,7 +52,7 @@ public class SupervisorOrEvaluatorDaoJDBC implements SupervisorOrEvaluatorDao {
 					int id = rs.getInt(1);
 					obj.setId(id);
 				}
-				DB.closeResultSet(rs);
+				DbRegistration.closeResultSet(rs);
 			}
 			else {
 				throw new DbException("Unexpected error! No rows affected!");
@@ -62,7 +62,7 @@ public class SupervisorOrEvaluatorDaoJDBC implements SupervisorOrEvaluatorDao {
 			throw new DbException(e.getMessage());
 		}
 		finally {
-			DB.closeStatement(st);
+			DbRegistration.closeStatement(st);
 		}
 
 	}
@@ -78,7 +78,7 @@ public class SupervisorOrEvaluatorDaoJDBC implements SupervisorOrEvaluatorDao {
 			
 			st.setString(1, obj.getName());
 			st.setString(2, obj.getEmail());
-			st.setString(3, obj.getMobileNamber());
+			st.setString(3, obj.getMobileNumber());
 			st.setString(4, obj.getGender().toString());
 			st.setInt(5, obj.getInstitution().getId());
 			st.setInt(6, obj.getId());
@@ -89,7 +89,7 @@ public class SupervisorOrEvaluatorDaoJDBC implements SupervisorOrEvaluatorDao {
 			throw new DbException(e.getMessage());
 		}
 		finally {
-			DB.closeStatement(st);
+			DbRegistration.closeStatement(st);
 		}
 
 	}
@@ -109,7 +109,7 @@ public class SupervisorOrEvaluatorDaoJDBC implements SupervisorOrEvaluatorDao {
 			throw new DbIntegrityException(e.getMessage());
 		} 
 		finally {
-			DB.closeStatement(st);
+			DbRegistration.closeStatement(st);
 		}
 
 	}
@@ -139,8 +139,8 @@ public class SupervisorOrEvaluatorDaoJDBC implements SupervisorOrEvaluatorDao {
 			throw new DbException(e.getMessage());
 		}
 		finally {
-			DB.closeStatement(st);
-			DB.closeResultSet(rs);
+			DbRegistration.closeStatement(st);
+			DbRegistration.closeResultSet(rs);
 		}
 	}
 
@@ -149,7 +149,7 @@ public class SupervisorOrEvaluatorDaoJDBC implements SupervisorOrEvaluatorDao {
 		obj.setId(rs.getInt("Id"));
 		obj.setName(rs.getString("Name"));
 		obj.setEmail(rs.getString("Email"));
-		obj.setMobileNamber(rs.getString("MobileNumber"));
+		obj.setMobileNumber(rs.getString("MobileNumber"));
 		obj.setGender(Gender.valueOf(rs.getString("Gender")));
 		obj.setInstitution(inst);
 		return obj;
@@ -158,7 +158,7 @@ public class SupervisorOrEvaluatorDaoJDBC implements SupervisorOrEvaluatorDao {
 	private Institution instantiateInstitution(ResultSet rs) throws SQLException {
 		Institution inst = new Institution();
 		inst.setId(rs.getInt("tbI.Id"));
-		inst.setAbreviationOrAcronym(rs.getString("tbI.AbreviationOrAcronym"));
+		inst.setAbbreviationOrAcronym(rs.getString("tbI.AbbreviationOrAcronym"));
 		inst.setName(rs.getString("tbI.Name"));
 		return inst;
 	}
@@ -195,8 +195,8 @@ public class SupervisorOrEvaluatorDaoJDBC implements SupervisorOrEvaluatorDao {
 		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
 		} finally {
-			DB.closeStatement(st);
-			DB.closeResultSet(rs);
+			DbRegistration.closeStatement(st);
+			DbRegistration.closeResultSet(rs);
 		}
 	}
 
@@ -239,8 +239,8 @@ public class SupervisorOrEvaluatorDaoJDBC implements SupervisorOrEvaluatorDao {
 			throw new DbException(e.getMessage());
 		}
 		finally {
-			DB.closeStatement(st);
-			DB.closeResultSet(rs);
+			DbRegistration.closeStatement(st);
+			DbRegistration.closeResultSet(rs);
 		}
 	}
 

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainViewController">
+   <content>
+      <VBox prefHeight="392.0" prefWidth="592.0">
+         <children>
+            <MenuBar>
+              <menus>
+                <Menu mnemonicParsing="false" text="Academic Year">
+                  <items>
+                    <MenuItem fx:id="menuItemSeeAll" mnemonicParsing="false" onAction="#onMenuItemSeeAllAction" text="See All" />
+                        <MenuItem fx:id="menuItemStartNew" mnemonicParsing="false" onAction="#onMenuItemStartNewAction" text="Start New" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Registration">
+                  <items>
+                    <MenuItem fx:id="menuItemStudent" mnemonicParsing="false" onAction="#onMenuItemStudentAction" text="Student" />
+                        <MenuItem fx:id="menuItemSupervisorOrEvaluator" mnemonicParsing="false" onAction="#onMenuItemSupervisorOrEvaluatorAction" text="Supervisor or Evaluator" />
+                        <MenuItem fx:id="menuItemInstitution" mnemonicParsing="false" onAction="#onMenuItemInstitutionAction" text="Institution" />
+                        <MenuItem fx:id="menuItemFinalProject" mnemonicParsing="false" onAction="#onMenuItemFinalProjectAction" text="Final Project" />
+                        <MenuItem fx:id="menuItemDefense" mnemonicParsing="false" onAction="#onMenuItemDefenseAction" text="Defense" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem fx:id="menuItemAbout" mnemonicParsing="false" onAction="#onMenuItemAboutAction" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+         </children>
+      </VBox>
+   </content>
+</ScrollPane>
